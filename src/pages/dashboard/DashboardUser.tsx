@@ -12,6 +12,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import BiodataSection from "../biodata/components/BiodataSection";
 import EducationSection from "../biodata/components/EducationSection";
 import TrainingSection from "../biodata/components/TrainingSection";
+import JobSection from "../biodata/components/JobSection";
 
 const DashboardUser = () => {
   const email = localStorage.getItem(LOCAL_STORAGE_KEY.EMAIL) || "";
@@ -39,6 +40,7 @@ const DashboardUser = () => {
         <BiodataSection data={data?.data} />
         <EducationSection biodataId={data?.data?.id} />
         <TrainingSection biodataId={data?.data?.id} />
+        <JobSection biodataId={data?.data?.id} />
       </section>
     </ProtectedRoute>
   );

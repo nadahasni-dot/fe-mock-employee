@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { ENDPOINTS } from "@/constants/api";
 import { API } from "@/lib/axios";
-import { TrainingDetailResponse } from "@/types/response/training";
+import { JobDetailResponse } from "@/types/response/job";
 import { ErrorResponse } from "@/types/response/error";
 import { CommonResponse } from "@/types/response/success";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -23,29 +24,29 @@ import { AxiosError, AxiosResponse } from "axios";
 import { EditIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TrainingSchema } from "../config/training-config";
+import { JobSchema } from "../config/job-config";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormTraining from "../form/FormTraining";
+import FormJob from "../form/FormJob";
 import { toast } from "sonner";
 
-const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
+const JobSection = ({ biodataId }: { biodataId?: number }) => {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const form = useForm<z.infer<typeof TrainingSchema>>({
-    resolver: zodResolver(TrainingSchema),
+  const form = useForm<z.infer<typeof JobSchema>>({
+    resolver: zodResolver(JobSchema),
   });
 
-  const endpoint = ENDPOINTS.TRAINING.GET_LIST.replace(
+  const endpoint = ENDPOINTS.JOB.GET_LIST.replace(
     ":id",
     biodataId?.toString() || ""
   );
 
   const { data, refetch } = useQuery<
-    AxiosResponse<CommonResponse<TrainingDetailResponse[]>>,
+    AxiosResponse<CommonResponse<JobDetailResponse[]>>,
     AxiosError<ErrorResponse<null>>,
-    CommonResponse<TrainingDetailResponse[]>
+    CommonResponse<JobDetailResponse[]>
   >({
     queryKey: [endpoint],
     queryFn: () => {
@@ -55,11 +56,9 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
   });
 
   const { isPending: isPendingDelete, mutate: mutateDelete } = useMutation({
-    mutationKey: [ENDPOINTS.TRAINING.DELETE],
-    mutationFn: (trainingId: number) => {
-      return API.delete(
-        ENDPOINTS.TRAINING.DELETE.replace(":id", trainingId.toString())
-      );
+    mutationKey: [ENDPOINTS.JOB.DELETE],
+    mutationFn: (jobId: number) => {
+      return API.delete(ENDPOINTS.JOB.DELETE.replace(":id", jobId.toString()));
     },
     onSuccess: () => {
       refetch();
@@ -70,24 +69,53 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
     },
   });
 
-  const createEndpoint = ENDPOINTS.TRAINING.CREATE.replace(
+  const createEndpoint = ENDPOINTS.JOB.CREATE.replace(
     ":id",
     biodataId?.toString() || ""
   );
   const { isPending: isPendingCreate, mutate: mutateCreate } = useMutation({
     mutationKey: [createEndpoint],
-    mutationFn: (payload: z.infer<typeof TrainingSchema>) => {
+    mutationFn: (payload: z.infer<typeof JobSchema>) => {
       return API.post(createEndpoint, payload);
+    },
+    onSuccess: () => {
+      toast.success("Berhasil menyimpan data pekerjaan");
+      setSelectedId(null);
+      setIsSheetOpen(false);
+      form.reset({
+        company_name: "",
+        position: "",
+        last_income: "",
+        year_end: "",
+        year_start: "",
+      });
+      refetch();
+    },
+    onError: (error: AxiosError<ErrorResponse<null>>) => {
+      const errorMessage = error.response?.data.message || "Error occured";
+      toast.error(errorMessage);
+    },
+  });
+
+  const updateEndpoint = ENDPOINTS.JOB.UPDATE.replace(
+    ":id",
+    selectedId?.toString() || ""
+  );
+  const { isPending: isPendingUpdate, mutate: mutateUpdate } = useMutation({
+    mutationKey: [updateEndpoint],
+    mutationFn: (payload: z.infer<typeof JobSchema>) => {
+      return API.put(updateEndpoint, payload);
     },
     onSuccess: () => {
       toast.success("Berhasil menyimpan data pendidikan");
       setSelectedId(null);
       setIsSheetOpen(false);
       form.reset({
-        course_name: "",
-        is_certificate: false,
+        company_name: "",
+        position: "",
+        last_income: "",
         year_end: "",
-        year_start: "undefined",
+        year_start: "",
       });
       refetch();
     },
@@ -97,34 +125,7 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
     },
   });
 
-  const updateEndpoint = ENDPOINTS.TRAINING.UPDATE.replace(
-    ":id",
-    selectedId?.toString() || ""
-  );
-  const { isPending: isPendingUpdate, mutate: mutateUpdate } = useMutation({
-    mutationKey: [updateEndpoint],
-    mutationFn: (payload: z.infer<typeof TrainingSchema>) => {
-      return API.put(updateEndpoint, payload);
-    },
-    onSuccess: () => {
-      toast.success("Berhasil menyimpan data pelatihan");
-      setSelectedId(null);
-      setIsSheetOpen(false);
-      form.reset({
-        course_name: "",
-        is_certificate: false,
-        year_end: "",
-        year_start: "undefined",
-      });
-      refetch();
-    },
-    onError: (error: AxiosError<ErrorResponse<null>>) => {
-      const errorMessage = error.response?.data.message || "Error occured";
-      toast.error(errorMessage);
-    },
-  });
-
-  const onSubmit = (payload: z.infer<typeof TrainingSchema>) => {
+  const onSubmit = (payload: z.infer<typeof JobSchema>) => {
     console.log(payload);
     if (selectedId) {
       mutateUpdate(payload);
@@ -137,7 +138,7 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
     <section className="flex flex-col gap-4 mt-6">
       <div className="flex justify-between">
         <h3 className="text-2xl font-semibold tracking-tight scroll-m-20">
-          Riwayat Pelatihan
+          Riwayat Pekerjaan
         </h3>
         <Sheet open={isSheetOpen} onOpenChange={(open) => setIsSheetOpen(open)}>
           <SheetTrigger asChild>
@@ -150,19 +151,19 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
               }}
             >
               <PlusIcon className="w-4 h-4" />
-              <span>Tambah Pelatihan</span>
+              <span>Tambah Pekerjaan</span>
             </Button>
           </SheetTrigger>
           <SheetContent className="overflow-auto">
             <SheetHeader>
               <SheetTitle>
-                {selectedId ? "Perbarui" : "Tambah"} Pelatihan
+                {selectedId ? "Perbarui" : "Tambah"} Pekerjaan
               </SheetTitle>
               <SheetDescription>
-                Kelola data pelatihan disini, klik simpan untuk selesai.
+                Kelola data pekerjaan disini, klik simpan untuk selesai.
               </SheetDescription>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormTraining form={form} />
+                <FormJob form={form} />
                 <Button
                   type="submit"
                   className="w-full mt-6"
@@ -178,9 +179,9 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
       <div className="flex flex-col gap-4">
         {data?.data ? (
           data.data.length < 1 ? (
-            <p>Tidak ada data pelatihan</p>
+            <p>Tidak ada data pekerjaan</p>
           ) : (
-            data.data.map((training) => (
+            data.data.map((job) => (
               <Card className="relative">
                 <div className="absolute flex gap-2 right-6 top-6">
                   <Button
@@ -188,12 +189,13 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
                     size="icon"
                     disabled={isPendingDelete}
                     onClick={() => {
-                      setSelectedId(training.id);
+                      setSelectedId(job.id);
                       form.reset({
-                        course_name: training.course_name,
-                        is_certificate: training.is_certificate,
-                        year_end: training.year_end,
-                        year_start: training.year_start,
+                        company_name: job.company_name,
+                        position: job.position,
+                        last_income: job.last_income.toString(),
+                        year_end: job.year_end,
+                        year_start: job.year_start,
                       });
                       setIsSheetOpen(true);
                     }}
@@ -204,30 +206,35 @@ const TrainingSection = ({ biodataId }: { biodataId?: number }) => {
                     variant="destructive"
                     size="icon"
                     disabled={isPendingDelete}
-                    onClick={() => mutateDelete(training.id)}
+                    onClick={() => mutateDelete(job.id)}
                   >
                     <TrashIcon className="w-4 h-4" />
                   </Button>
                 </div>
                 <CardHeader>
-                  <CardTitle>{training.course_name}</CardTitle>
+                  <CardTitle>{job.position}</CardTitle>
                   <CardDescription>
-                    {training.year_start} - {training.year_end} (
-                    {training.is_certificate
-                      ? "Bersertifikat"
-                      : "Tidak Bersertifikat"}
-                    )
+                    {job.company_name} ({job.year_start} - {job.year_end})
                   </CardDescription>
                 </CardHeader>
+                <CardContent>
+                  <p className="leading-7 text-slate-500">
+                    Pendapatan terakhir: {" "}
+                    {job.last_income.toLocaleString("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    })}
+                  </p>
+                </CardContent>
               </Card>
             ))
           )
         ) : (
-          <div>Tidak ada data pelatihan</div>
+          <div>Tidak ada data pendidikan</div>
         )}
       </div>
     </section>
   );
 };
 
-export default TrainingSection;
+export default JobSection;
