@@ -7,7 +7,7 @@ const ProtectedRoute = ({
   role,
 }: {
   children: ReactNode;
-  role: "USER" | "ADMIN";
+  role?: "USER" | "ADMIN";
 }) => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEY.TOKEN);
   const roleSaved = localStorage.getItem(LOCAL_STORAGE_KEY.ROLE);
@@ -16,12 +16,14 @@ const ProtectedRoute = ({
     return <Navigate to="/signin" replace />;
   }
 
-  if (role === "USER" && roleSaved !== "USER") {
-    return <Navigate to="/admin" replace />;
-  }
+  if (role) {
+    if (role === "USER" && roleSaved !== "USER") {
+      return <Navigate to="/admin" replace />;
+    }
 
-  if (role === "ADMIN" && roleSaved !== "ADMIN") {
-    return <Navigate to="/app" replace />;
+    if (role === "ADMIN" && roleSaved !== "ADMIN") {
+      return <Navigate to="/app" replace />;
+    }
   }
 
   return <>{children}</>;

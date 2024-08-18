@@ -14,7 +14,7 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 w-full bg-white border-b">
+    <header className="sticky top-0 z-50 w-full bg-white border-b">
       <div className="container flex items-center justify-between h-16 text-black">
         <Link to="/">
           <h1 className="text-2xl font-semibold tracking-tight scroll-m-20">

@@ -1,4 +1,5 @@
 import App from "@/App";
+import BiodataDetail from "@/pages/biodata/BiodataDetail";
 import DashboardUser from "@/pages/dashboard/DashboardUser";
 import Home from "@/pages/home/Home";
 import SignIn from "@/pages/signin/SignIn";
@@ -43,12 +44,19 @@ const adminRoute = createRoute({
   component: () => <></>,
 });
 
+const biodataDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/biodata/detail/$biodataId",
+  component: BiodataDetail,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   signInRoute,
   signUpRoute,
   appRoute,
   adminRoute,
+  biodataDetailRoute,
 ]);
 
 export const router = createRouter({ routeTree });
