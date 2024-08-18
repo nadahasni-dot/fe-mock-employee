@@ -113,7 +113,7 @@ const BiodataSection = ({ data }: { data?: BiodataDetailResponse | null }) => {
   };
 
   return (
-    <section className="container flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
       <h3 className="text-2xl font-semibold tracking-tight scroll-m-20">
         Biodata
       </h3>

@@ -14,4 +14,11 @@ export const ENDPOINTS = {
     GET_DETAIL_USER: `${prefix}/biodata/detail`,
     UPDATE_USER: `${prefix}/biodata/update`,
   },
+  EDUCATION: {
+    GET_LIST: `${prefix}/education/:id`,
+    GET_DETAIL: `${prefix}/education/detail/:id`,
+    CREATE: `${prefix}/education/:id`,
+    UPDATE: `${prefix}/education/detail/:id`,
+    DELETE: `${prefix}/education/detail/:id`,
+  },
 };

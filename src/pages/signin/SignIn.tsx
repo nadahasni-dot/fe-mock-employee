@@ -49,7 +49,7 @@ const SignIn = () => {
       localStorage.setItem(LOCAL_STORAGE_KEY.EMAIL, data?.email || "");
       localStorage.setItem(LOCAL_STORAGE_KEY.ROLE, data?.role || "");
 
-      navigate({ to: "/app" });
+      navigate({ to: "/app", replace: true });
     },
     onError: (error: AxiosError<ErrorResponse<null>>) => {
       const errorMessage = error.response?.data.message || "Error occured";

@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { AxiosError, AxiosResponse } from "axios";
 import BiodataSection from "../biodata/components/BiodataSection";
+import EducationSection from "../biodata/components/EducationSection";
 
 const DashboardUser = () => {
   const email = localStorage.getItem(LOCAL_STORAGE_KEY.EMAIL) || "";
@@ -34,8 +35,9 @@ const DashboardUser = () => {
           Selamat Datang {email}!
         </h2>
         <p className="leading-7">Harap lengkapi biodata</p>
+        <BiodataSection data={data?.data} />
+        <EducationSection biodataId={data?.data?.id} />
       </section>
-      <BiodataSection data={data?.data} />
     </ProtectedRoute>
   );
 };
