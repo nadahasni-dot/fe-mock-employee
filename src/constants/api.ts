@@ -21,4 +21,18 @@ export const ENDPOINTS = {
     UPDATE: `${prefix}/education/detail/:id`,
     DELETE: `${prefix}/education/detail/:id`,
   },
+  TRAINING: {
+    GET_LIST: `${prefix}/training/:id`,
+    GET_DETAIL: `${prefix}/training/detail/:id`,
+    CREATE: `${prefix}/training/:id`,
+    UPDATE: `${prefix}/training/detail/:id`,
+    DELETE: `${prefix}/training/detail/:id`,
+  },
+  JOB: {
+    GET_LIST: `${prefix}/job/:id`,
+    GET_DETAIL: `${prefix}/job/detail/:id`,
+    CREATE: `${prefix}/job/:id`,
+    UPDATE: `${prefix}/job/detail/:id`,
+    DELETE: `${prefix}/job/detail/:id`,
+  },
 };
