@@ -1,5 +1,6 @@
 import App from "@/App";
 import BiodataDetail from "@/pages/biodata/BiodataDetail";
+import DashboardAdmin from "@/pages/dashboard/DashboardAdmin";
 import DashboardUser from "@/pages/dashboard/DashboardUser";
 import Home from "@/pages/home/Home";
 import SignIn from "@/pages/signin/SignIn";
@@ -41,7 +42,7 @@ const appRoute = createRoute({
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
-  component: () => <></>,
+  component: DashboardAdmin,
 });
 
 const biodataDetailRoute = createRoute({
