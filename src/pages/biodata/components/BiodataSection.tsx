@@ -24,8 +24,11 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { ErrorResponse } from "@/types/response/error";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 const BiodataSection = ({ data }: { data?: BiodataDetailResponse | null }) => {
+  const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
+
   const role = localStorage.getItem(LOCAL_STORAGE_KEY.ROLE) || "";
 
   const form = useForm<z.infer<typeof BiodataSchema>>({
@@ -101,6 +104,8 @@ const BiodataSection = ({ data }: { data?: BiodataDetailResponse | null }) => {
           ],
         });
       }
+
+      setIsSheetOpen(false);
     },
     onError: (error: AxiosError<ErrorResponse<null>>) => {
       const errorMessage = error.response?.data.message || "Error occured";
@@ -118,9 +123,35 @@ const BiodataSection = ({ data }: { data?: BiodataDetailResponse | null }) => {
         Biodata
       </h3>
       <Card className="relative flex flex-col gap-2 p-6">
-        <Sheet>
+        <Sheet open={isSheetOpen} onOpenChange={(open) => setIsSheetOpen(open)}>
           <SheetTrigger asChild>
-            <Button size="icon" variant="outline" className="absolute right-6">
+            <Button
+              size="icon"
+              variant="outline"
+              className="absolute right-6"
+              onClick={() =>
+                form.reset({
+                  address_idcard: data?.address_idcard || "",
+                  address_live: data?.address_live || "",
+                  birth_date: data?.birth_date
+                    ? dayjs(new Date(data.birth_date)).format("YYYY-MM-DD")
+                    : "",
+                  birth_place: data?.birth_place || "",
+                  blood_type: data?.blood_type || "",
+                  expected_income: data?.expected_income?.toString() || "",
+                  gender: data?.gender || "",
+                  is_accept_all_placement:
+                    data?.is_accept_all_placement || false,
+                  name: data?.name || "",
+                  phone: data?.phone || "",
+                  phone_relation: data?.phone_relation || "",
+                  position: data?.position || "",
+                  religion: data?.religion || "",
+                  skills: data?.skills || "",
+                  status: data?.status || "",
+                })
+              }
+            >
               <EditIcon className="w-4 h-4" />
             </Button>
           </SheetTrigger>
